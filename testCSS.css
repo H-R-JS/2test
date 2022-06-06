@@ -13,6 +13,7 @@ h1 {
 
 .spoiler-content.visible {
   display: inline;
+  background-color: rgb(255, 159, 159);
   width: auto;
   height: auto;
   opacity: 1;
