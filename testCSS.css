@@ -1,3 +1,4 @@
+/* FIRST TEST */
 h1 {
   color: red;
 }
@@ -17,4 +18,23 @@ h1 {
   width: auto;
   height: auto;
   opacity: 1;
+}
+
+/* SECOND TEST */
+
+ul {
+  list-style-type: none;
+}
+
+a {
+  text-decoration: none;
+  color: #111;
+}
+
+.tab-contentS {
+  display: none;
+}
+
+.tab-contentS.active {
+  display: block;
 }

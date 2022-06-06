@@ -1,9 +1,5 @@
-// affichage du spoiler lorsque que l'on appuit sur le btn spoiler, disparition de celui-ci.
-/* var button = document.querySelector(".spoiler button");
-button.addEventListener("click", function () {
-  this.nextElementSibling.classList.add("visible");
-  this.parentNode.removeChild(this);
-}); */
+// FIRST TEST
+
 (function () {
   const elementSpoilS = document.querySelectorAll(".spoiler");
 
@@ -34,3 +30,5 @@ button.addEventListener("click", function () {
     createSpoilerbtn(elementSpoilS[i]);
   }
 })();
+
+// SECOND TEST
