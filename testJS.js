@@ -1,4 +1,4 @@
-// FIRST TEST
+///// FIRST TEST
 
 (function () {
   const elementSpoilS = document.querySelectorAll(".spoiler");
@@ -26,9 +26,63 @@
     });
   };
 
-  for (var i = 0; i < elementSpoilS.length; i++) {
+  for (let i = 0; i < elementSpoilS.length; i++) {
     createSpoilerbtn(elementSpoilS[i]);
   }
 })();
 
-// SECOND TEST
+///// SECOND TEST//////////////////////////////////////////////////
+// Lorsque que l'on clique, on doit dans l'ordre:
+// - retirer la class active de l'onglet qui n'est plus actuel
+// - Ajouter la class active à l'onglet cliqué
+// - retirer la class active du contenu qui n'est plus actuel
+// - ajouter la class active au contenu cliqué
+(function () {
+  var afficherOnglet = function (a) {
+    var li = a.parentNode.classList;
+    var div = a.parentNode.parentNode.parentNode;
+    var activeTab = div.querySelector(".all-tabs-content .active"); // contenu actif
+    var AfficheActuel = div.querySelector(a.getAttribute("href")); // contenu à afficher
+    if (li.contains("active")) {
+      return false;
+    } else {
+      // on retire la class
+      div.querySelector(".tabs .active").classList.remove("active");
+      // on ajoute la class
+      li.add("active");
+      // on retire la class au contenu
+      ///div.querySelector(".all-tabs-content .active").classList.remove("active");
+      // on ajoute la class au contenu
+      ///div.querySelector(a.getAttribute("href")).classList.add("active");
+
+      activeTab.classList.add("fade");
+      activeTab.classList.remove("in");
+      activeTab.addEventListener("transitionend", function () {
+        this.classList.remove("fade");
+        this.classList.remove("active");
+        AfficheActuel.classList.add("active");
+        AfficheActuel.classList.add("fade");
+        AfficheActuel.offsetWidth;
+        AfficheActuel.classList.add("in");
+      });
+
+      // On ajoute la class fade sur l'élément actif
+      // A la fin de l'animation on retire la class fade et active
+      // on ajoute la class active et fade à l'élément afficher
+      // puis on ajoute la class in
+    }
+  };
+
+  var tabs = document.querySelectorAll(".tabs a");
+  for (let i = 0; i < tabs.length; i++) {
+    tabs[i].addEventListener("click", function (e) {
+      afficherOnglet(this);
+    });
+  }
+
+  var hash = window.location.hash;
+  var a = document.querySelector("a[href='" + hash + "']");
+  if (a !== null && !a.parentNode.classList.contains("active")) {
+    afficherOnglet(a);
+  }
+})();
