@@ -38,7 +38,10 @@
 // - retirer la class active du contenu qui n'est plus actuel
 // - ajouter la class active au contenu cliqué
 (function () {
-  var afficherOnglet = function (a) {
+  var afficherOnglet = function (a, animation) {
+    if (animation === undefined) {
+      animation = true;
+    }
     var li = a.parentNode.classList;
     var div = a.parentNode.parentNode.parentNode;
     var activeTab = div.querySelector(".all-tabs-content .active"); // contenu actif
@@ -54,17 +57,23 @@
       ///div.querySelector(".all-tabs-content .active").classList.remove("active");
       // on ajoute la class au contenu
       ///div.querySelector(a.getAttribute("href")).classList.add("active");
-
-      activeTab.classList.add("fade");
-      activeTab.classList.remove("in");
-      activeTab.addEventListener("transitionend", function () {
-        this.classList.remove("fade");
-        this.classList.remove("active");
+      if (animation) {
+        activeTab.classList.add("fade");
+        activeTab.classList.remove("in");
+        var transitionEnd = function () {
+          this.classList.remove("fade");
+          this.classList.remove("active");
+          AfficheActuel.classList.add("active");
+          AfficheActuel.classList.add("fade");
+          AfficheActuel.offsetWidth;
+          AfficheActuel.classList.add("in");
+          activeTab.removeEventListener("transitionend", transitionEnd);
+        };
+        activeTab.addEventListener("transitionend", transitionEnd);
+      } else {
         AfficheActuel.classList.add("active");
-        AfficheActuel.classList.add("fade");
-        AfficheActuel.offsetWidth;
-        AfficheActuel.classList.add("in");
-      });
+        activeTab.classList.remove("active");
+      }
 
       // On ajoute la class fade sur l'élément actif
       // A la fin de l'animation on retire la class fade et active
@@ -76,13 +85,18 @@
   var tabs = document.querySelectorAll(".tabs a");
   for (let i = 0; i < tabs.length; i++) {
     tabs[i].addEventListener("click", function (e) {
-      afficherOnglet(this);
+      afficherOnglet(this, true);
     });
   }
 
-  var hash = window.location.hash;
-  var a = document.querySelector("a[href='" + hash + "']");
-  if (a !== null && !a.parentNode.classList.contains("active")) {
-    afficherOnglet(a);
-  }
+  var changeHash = function (e) {
+    var hash = window.location.hash;
+    var a = document.querySelector("a[href='" + hash + "']");
+    if (a !== null && !a.parentNode.classList.contains("active")) {
+      afficherOnglet(a, e !== undefined);
+    }
+  };
+
+  window.addEventListener("hashchange", changeHash);
+  changeHash();
 })();
