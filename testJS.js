@@ -100,3 +100,40 @@
   window.addEventListener("hashchange", changeHash);
   changeHash();
 })();
+
+///// THIRD TEST////////////////////////////////////////////////// (vocabulaire)
+
+(function () {
+  /*
+    Lorsque l'on scroll
+    Si le menu sors de l'écran
+    alors il deviendra fixe
+  */
+  var scrollY = function () {
+    var supportPageOffset = window.pageXOffset !== undefined;
+    var isCSS1Compat = (document.compatMode || "") === "CSS1Compat";
+
+    return supportPageOffset
+      ? window.pageYOffset
+      : isCSS1Compat
+      ? document.documentElement.scrollTop
+      : document.body.scrollTop;
+  };
+  // cette function permet d'être comprit par toutes les versions des navigateurs, d'où sont utilité.
+
+  var element = document.querySelector(".menu");
+  var rect = element.getBoundingClientRect(); // getBoundingClientRec () méthode permettant de retourner la position ( largeur et hauteur) de l'element par rapport à la gauche au haut de la page
+  var top = rect.top + scrollY();
+  var width = rect.width;
+  var onScroll = function () {
+    var hasScrollClass = element.classList.contains("fixed"); // cela évite que l'event soit lu trop de fois, seulement une fois
+    if (scrollY() > top && !hasScrollClass) {
+      element.classList.add("fixed");
+      element.style.width = width + "px";
+    } else if (scrollY() < top && hasScrollClass) {
+      element.classList.remove("fixed");
+    }
+  };
+
+  window.addEventListener("scroll", onScroll); // On applique l'event scroll ( pour écouter le scroll de la souris) sur window car cela concerne toute la fenêtre et pas dans un scroll overflow
+})();
