@@ -123,3 +123,29 @@ a {
   position: fixed;
   top: 0;
 }
+.content {
+  margin-top: 20px;
+}
+
+.main {
+  float: left;
+  width: 50%;
+
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.sidebar {
+  position: relative;
+  float: right;
+  width: 25%;
+  height: 800px;
+  padding: 0 40px;
+  border: 2px dashed #505050;
+}
+
+.bloc {
+  background-color: #fff;
+  padding: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+}
