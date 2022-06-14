@@ -119,8 +119,8 @@ a {
   background-color: #eeeeee;
 }
 
-.fixed {
-  position: fixed;
+.sidebar.fixed {
+  opacity: 0.5;
   top: 0;
 }
 .content {
@@ -130,17 +130,19 @@ a {
 .main {
   float: left;
   width: 50%;
-
   background-color: #fff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
 .sidebar {
-  position: relative;
   float: right;
   width: 25%;
+  padding: 0 20px;
+}
+
+.sidebar-container {
+  position: relative;
   height: 800px;
-  padding: 0 40px;
   border: 2px dashed #505050;
 }
 

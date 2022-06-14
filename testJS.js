@@ -122,77 +122,86 @@
   // cette function permet d'être comprit par toutes les versions des navigateurs, d'où sont utilité.
 
   // Selecteurs
+  window.makeSticky = function (element) {
+    var offset = parseInt(element.getAttribute("data-offset") || 0, 10); // Soit l'offset est la valeur contenu par l'attrabu, OU il n'y a pas d'attribu dans ces cas là ce sera 0
+    var rect = element.getBoundingClientRect(); // getBoundingClientRec () méthode permettant de retourner la position ( largeur et hauteur) de l'element par rapport à la gauche au haut de la page
+    if (element.getAttribute("data-contraint")) {
+      var contraint = document.querySelector(
+        element.getAttribute("data-contraint")
+      );
+    } else {
+      var contraint = document.body;
+    }
+    var contraintRect = contraint.getBoundingClientRect();
+    var contraintBottom =
+      contraintRect.top +
+      scrollY() +
+      contraintRect.height -
+      offset -
+      rect.height;
+    var top = rect.top + scrollY();
+    var fake = document.createElement("div");
+    fake.style.width = rect.width + "px";
+    fake.style.height = rect.height + "px";
 
-  var elementS = document.querySelectorAll("[data-sticky]");
-
-  for (i = 0; i < elementS.length; i++) {
-    (function (element) {
-      var rect = element.getBoundingClientRect(); // getBoundingClientRec () méthode permettant de retourner la position ( largeur et hauteur) de l'element par rapport à la gauche au haut de la page
-      var offset = parseInt(element.getAttribute("data-offset") || 0, 10); // Soit l'offset est la valeur contenu par l'attrabu, OU il n'y a pas d'attribu dans ces cas là ce sera 0
-      if (element.getAttribute("data-contraint")) {
-        var contraint = document.querySelector(
-          element.getAttribute("data-contraint")
-        );
-      } else {
-        var contraint = document.body;
+    // Fonctions
+    var onScroll = function () {
+      if (scrollY() > contraintBottom && element.style.position != "absolute") {
+        element.style.position = "absolute";
+        element.style.bottom = "0";
+        element.style.top = "auto";
+      } else if (
+        scrollY() > top - offset &&
+        scrollY() < contraintBottom &&
+        element.style.position != "fixed"
+      ) {
+        element.classList.add("fixed");
+        element.style.position = "fixed";
+        element.style.top = offset + "px";
+        element.style.bottom = "auto";
+        element.style.width = rect.width + "px";
+        element.parentNode.insertBefore(fake, element);
+      } else if (
+        scrollY() < top - offset &&
+        element.style.position != "static"
+      ) {
+        element.classList.remove("fixed");
+        element.style.position = "static";
+        if (element.parentNode.contains(fake)) {
+          element.parentNode.removeChild(fake);
+        }
       }
-      var contraintRect = contraint.getBoundingClientRect();
-      var contraintBottom =
+    };
+
+    var onResize = function () {
+      // On recalcule tout pour que cela prenne la taille de l'écran lors de la modification de taille de la fenêtre.
+      element.style.width = "auto";
+      element.classList.remove("fixed");
+      element.style.position = "static";
+      fake.style.display = "none";
+      rect = element.getBoundingClientRect();
+      contraintRect = contraint.getBoundingClientRect();
+      contraintBottom =
         contraintRect.top +
         scrollY() +
         contraintRect.height -
         offset -
         rect.height;
-      var top = rect.top + scrollY();
-      var fake = document.createElement("div");
+      top = rect.top + scrollY();
       fake.style.width = rect.width + "px";
       fake.style.height = rect.height + "px";
+      fake.style.display = "block";
+      onScroll();
+    };
 
-      // Fonctions
-      var onScroll = function () {
-        if (
-          scrollY() > contraintBottom &&
-          element.style.position != "absolute"
-        ) {
-          element.style.position = "absolute";
-          element.style.bottom = "0";
-          element.style.top = "auto";
-        } else if (
-          scrollY() > top - offset &&
-          element.style.position != "fixed"
-        ) {
-          element.classList.add("fixed");
-          element.style.position = "fixed";
-          element.style.top = offset + "px";
-          element.style.bottom = "auto";
-          element.style.width = rect.width + "px";
-          element.parentNode.insertBefore(fake, element);
-        } else if (
-          scrollY() < top - offset &&
-          element.style.position != "static"
-        ) {
-          element.classList.remove("fixed");
-          element.style.position = "static";
-          element.parentNode.removeChild(fake);
-        }
-      };
+    // Listener
+    window.addEventListener("scroll", onScroll); // On applique l'event scroll ( pour écouter le scroll de la souris) sur window car cela concerne toute la fenêtre et pas dans un scroll overflow
+    window.addEventListener("resize", onResize); // On applique l'event scroll ( pour écouter le scroll de la souris) sur window car cela concerne toute la fenêtre et pas dans un scroll overflow}
+  };
 
-      var onResize = function () {
-        // On recalcule tout pour que cela prenne la taille de l'écran lors de la modification de taille de la fenêtre.
-        element.style.width = "auto";
-        element.classList.remove("fixed");
-        fake.style.display = "none";
-        rect = element.getBoundingClientRect();
-        top = rect.top + scrollY();
-        fake.style.width = rect.width + "px";
-        fake.style.height = rect.height + "px";
-        fake.style.display = "block";
-        onScroll();
-      };
+  var elementS = document.querySelectorAll("[data-sticky]");
 
-      // Listener
-      window.addEventListener("scroll", onScroll); // On applique l'event scroll ( pour écouter le scroll de la souris) sur window car cela concerne toute la fenêtre et pas dans un scroll overflow
-      window.addEventListener("resize", onResize); // On applique l'event scroll ( pour écouter le scroll de la souris) sur window car cela concerne toute la fenêtre et pas dans un scroll overflow
-    })(elementS[i]);
+  for (i = 0; i < elementS.length; i++) {
+    makeSticky(elementS[i]);
   }
 })();
