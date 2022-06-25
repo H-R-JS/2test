@@ -3,7 +3,11 @@ var eleve = function (nom) {
 };
 
 eleve.prototype.moyenne = function () {
-  return 10;
+  var somme = 0;
+  this.notes.forEach(function (note, index) {
+    somme += this.notes[index];
+  }, this);
+  return Math.round(somme / this.notes.length);
 };
 
 eleve.prototype.present = function () {
@@ -18,9 +22,6 @@ var Delegue = function (nom) {
 Delegue.prototype = Object.create(eleve.prototype);
 Delegue.prototype.constructor = Delegue;
 
-Delegue.prototype.moyenne = function () {
-  return 20;
-};
-
 var Jean = new eleve("jean");
+Jean.notes = [10, 15];
 var Marc = new Delegue("marc");
