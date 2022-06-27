@@ -1,0 +1,46 @@
+body {
+  background: linear-gradient(rgb(13, 87, 197), rgb(14, 146, 207));
+  height: 1200px;
+}
+
+.item {
+  background-color: #fff;
+  box-shadow: 10px 10px 15px rgba(000, 000, 000, 0.24);
+  margin-top: 40px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.item-title {
+  font-size: 30px;
+  font-weight: 700;
+  padding: 20px 10px;
+}
+
+.item-description {
+  padding: 10px 10px;
+}
+
+.back-color1 {
+  background-color: red;
+  height: 300px;
+}
+
+.back-color2 {
+  background-color: green;
+  height: 300px;
+}
+
+.back-color3 {
+  background-color: purple;
+  height: 300px;
+}
+
+.back-color4 {
+  background-color: yellow;
+  height: 300px;
+}
+
+.back-color5 {
+  background-color: black;
+  height: 300px;
+}
