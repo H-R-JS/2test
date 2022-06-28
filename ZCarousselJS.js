@@ -19,13 +19,36 @@ class Carousel {
       },
       options
     );
+    let children = [].slice.call(element.children); // variable array contenant les element enfants ( slice transfert les enfants dans le nouveau tableau, en l'appelant dans le tableau créer et non celui de slice)
     let root = this.createDivWithClass("carousel");
-    let container = this.createDivWithClass("caroussel-container");
-    root.appendChild(container);
+    this.container = this.createDivWithClass("carousel-container");
+    root.appendChild(this.container);
     this.element.appendChild(root);
+    this.items = children.map((child) => {
+      let item = this.createDivWithClass("carousel-item");
+      item.appendChild(child);
+      this.container.appendChild(item);
+      return item; // créer un div de item
+    });
+    this.setStyle(); // appel la fonction de calcul d'emplacement
   }
 
+  setStyle() {
+    let ratio = this.items.length / this.options.slidesVisible; // Calcule le fait que enfant soit 3 devant nous en prenant la place adéquat
+    this.container.style.width = ratio * 100 + "%";
+    this.items.forEach(
+      (item) =>
+        (item.style.width = 100 / this.options.slidesVisible / ratio + "%") // Pour chaque item le calcul de son emplacement dans l'itération
+    );
+  }
+
+  /**
+   *
+   * @param {string} className
+   * @returns {HTMLElement}
+   */
   createDivWithClass(className) {
+    // Créer un div avec une class
     let div = document.createElement("div");
     div.classList.add(className);
     return div;

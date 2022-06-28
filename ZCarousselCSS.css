@@ -44,3 +44,18 @@ body {
   background-color: black;
   height: 300px;
 }
+
+.carousel {
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-container::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.carousel-item {
+  float: left;
+}
