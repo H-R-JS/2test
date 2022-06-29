@@ -47,7 +47,10 @@ body {
 
 .carousel {
   position: relative;
-  overflow: hidden;
+}
+
+.carousel-container {
+  transition: transform 0.3s;
 }
 
 .carousel-container::after {
@@ -58,4 +61,33 @@ body {
 
 .carousel-item {
   float: left;
+}
+
+.item {
+  margin-left: 10px;
+}
+
+.carousel-next,
+.carousel-prev {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background-color: #fff;
+  border-radius: 50%;
+  top: 50%;
+  margin-top: -20px;
+  right: -20px;
+  box-shadow: 0 15px 35px #323232, 0 5px 15px #00001a;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.carousel-prev {
+  right: auto;
+  left: -20px;
+}
+
+.carousel-next:hover,
+.carousel-prev:hover {
+  transform: scale(1.2);
 }
