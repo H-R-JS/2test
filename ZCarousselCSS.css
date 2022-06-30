@@ -79,12 +79,20 @@ body {
   right: -20px;
   box-shadow: 0 15px 35px #323232, 0 5px 15px #00001a;
   cursor: pointer;
-  transition: transform 0.3s;
+  transition: transform 0.3s, opacity 0.3s;
 }
 
 .carousel-prev {
   right: auto;
   left: -20px;
+}
+
+.carousel-prev-hidden {
+  opacity: 0;
+}
+
+.carousel-next-hidden {
+  opacity: 0;
 }
 
 .carousel-next:hover,
