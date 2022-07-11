@@ -12,6 +12,8 @@ class Carousel {
    * @param {Object} {options.slidesToScroll=1} Nombre d'éléments à faire défiler
    * @param {Object} {options.slidesVisible=1} Nombre d'éléments visible dans un slide
    * @param {Boolean} {options.loop=false} Doit on boucler en fin de slide
+   * @param {boolean} {options.pagination=false}
+   * @param {boolean} {options.navigation=true}
    */
 
   constructor(element, options = {}) {
@@ -24,6 +26,8 @@ class Carousel {
         slidesToScroll: 1,
         slidesVisible: 1,
         loop: false,
+        pagination: false,
+        navigation: true,
       },
       options
     );
@@ -42,7 +46,14 @@ class Carousel {
       return item; // créer un div de item
     });
     this.setStyle(); // appel la fonction de calcul d'emplacement
-    this.createNavigation();
+    if (this.options.navigation) {
+      this.createNavigation();
+    }
+    if (this.options.pagination) {
+      this.createPagination();
+    }
+
+    //EVENEMENTS
     this.moveCallbacks.forEach((callB) => callB(0));
     this.onWindowResize();
     window.addEventListener("resize", this.onWindowResize.bind(this));
@@ -69,6 +80,32 @@ class Carousel {
         nextButton.classList.add("carousel-next-hidden");
       } else {
         nextButton.classList.remove("carousel-next-hidden");
+      }
+    });
+  }
+
+  createPagination() {
+    let pagination = this.createDivWithClass("carousel-pagination");
+    let buttons = [];
+    this.root.appendChild(pagination);
+    for (
+      let i = 0;
+      i < this.items.length;
+      i = i + this.options.slidesToScroll
+    ) {
+      let button = this.createDivWithClass("carousel-pagination-button");
+      button.addEventListener("click", () => this.gotoItem(i));
+      pagination.appendChild(button);
+      buttons.push(button);
+    }
+    this.onMove((index) => {
+      let activeButton =
+        buttons[Math.floor(index / this.options.slidesToScroll)];
+      if (activeButton) {
+        buttons.forEach((button) =>
+          button.classList.remove("carousel-pagination-button--active")
+        );
+        activeButton.classList.add("carousel-pagination-button--active");
       }
     });
   }
@@ -156,7 +193,7 @@ class Carousel {
   }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+var onReady = function () {
   new Carousel(document.querySelector("#carousel1"), {
     slidesToScroll: 1,
     slidesVisible: 3,
@@ -166,6 +203,11 @@ document.addEventListener("DOMContentLoaded", function () {
   new Carousel(document.querySelector("#carousel2"), {
     slidesToScroll: 2,
     slidesVisible: 3,
-    loop: false,
+    loop: true,
+    pagination: true,
   });
-});
+};
+if (document.readyState !== "loading") {
+  onReady();
+}
+document.addEventListener("DOMContentLoaded", onReady);

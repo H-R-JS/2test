@@ -99,3 +99,35 @@ body {
 .carousel-prev:hover {
   transform: scale(1.2);
 }
+
+.carousel-pagination {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 470px;
+  text-align: center;
+}
+
+.carousel-pagination-button {
+  background-color: #fff;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 3px;
+  box-shadow: 0 2px 5px #3232321a;
+  transition: transform 0.3s;
+  cursor: pointer;
+}
+
+.carousel-pagination-button--active,
+.carousel-pagination-button:hover {
+  transform: scale(1.4);
+}
+
+@media screen and(min-width: 800px) {
+  .carousel-pagination {
+    display: block;
+  }
+}
