@@ -14,6 +14,7 @@ class Carousel {
    * @param {Boolean} {options.loop=false} Doit on boucler en fin de slide
    * @param {boolean} {options.pagination=false}
    * @param {boolean} {options.navigation=true}
+   * @param {boolean} {options.infinite=false}
    */
 
   constructor(element, options = {}) {
@@ -28,6 +29,7 @@ class Carousel {
         loop: false,
         pagination: false,
         navigation: true,
+        infinite: false,
       },
       options
     );
@@ -42,9 +44,25 @@ class Carousel {
     this.items = children.map((child) => {
       let item = this.createDivWithClass("carousel-item");
       item.appendChild(child);
-      this.container.appendChild(item);
       return item; // créer un div de item
     });
+
+    if (this.options.infinite) {
+      // Si infinite = true, alors on va créer un système créant plusieurs tableau avec les items
+      let offset = this.options.slidesVisible * 2 - 1;
+      this.items = [
+        ...this.items // on concate avec ...
+          .slice(this.items.length - offset) // on récupère les 5 derniers element pour les mettre devant
+          .map((item) => item.cloneNode(true)),
+        ...this.items, // Les elements en tout
+        ...this.items
+          .slice(0, offset) // on récupère les 5 premiers element pour les mettre après
+          .map((item) => item.cloneNode(true)), // on clone dans un nouveau tableau "map" avec true pour cloner les enfants
+      ];
+      this.gotoItem(offset, false);
+      console.log(this.items);
+    }
+    this.items.forEach((item) => this.container.appendChild(item)); // pour chaque element on l'installe dans le container
     this.setStyle(); // appel la fonction de calcul d'emplacement
     if (this.options.navigation) {
       this.createNavigation();
@@ -54,9 +72,15 @@ class Carousel {
     }
 
     //EVENEMENTS
-    this.moveCallbacks.forEach((callB) => callB(0));
+    this.moveCallbacks.forEach((callB) => callB(this.currentItem));
     this.onWindowResize();
     window.addEventListener("resize", this.onWindowResize.bind(this));
+    if (this.options.infinite) {
+      this.container.addEventListener(
+        "transitionend",
+        this.resetInfinite.bind(this)
+      );
+    }
   }
 
   createNavigation() {
@@ -118,7 +142,13 @@ class Carousel {
     this.gotoItem(this.currentItem - this.slidesToScroll);
   }
 
-  gotoItem(index) {
+  /**
+   * Deplace le carousel vers l'élément ciblé
+   * @param {number} index
+   * @param {boolean} {animation=true}
+   */
+
+  gotoItem(index, animation = true) {
     if (index < 0) {
       index = this.items.length - this.options.slidesVisible;
     } else if (
@@ -130,10 +160,22 @@ class Carousel {
       index = 0;
     }
     let translateX = (index * -100) / this.items.length; // cacule le déplacement en fonction de l'index donné
+    if (animation === false) {
+      this.container.style.transition = "none";
+    }
     this.container.style.transform = "translate3d(" + translateX + "%, 0, 0)";
+    this.container.offsetHeight; // recupère une propriété pour forcer l'usage de la prochaine condition
+    if (animation === false) {
+      this.container.style.transition = "";
+    }
     this.currentItem = index;
     this.moveCallbacks.forEach((callB) => callB(index));
   }
+
+  resetInfinite() {
+    // créer l'effet d'infini en deplaçant le this.container
+  }
+
   /**
    *
    * @param {moveCallbacks} callB
@@ -197,7 +239,8 @@ var onReady = function () {
   new Carousel(document.querySelector("#carousel1"), {
     slidesToScroll: 1,
     slidesVisible: 3,
-    loop: false,
+    loop: true,
+    pagination: true,
   });
 
   new Carousel(document.querySelector("#carousel2"), {
@@ -205,6 +248,7 @@ var onReady = function () {
     slidesVisible: 3,
     loop: true,
     pagination: true,
+    infinite: true,
   });
 };
 if (document.readyState !== "loading") {
