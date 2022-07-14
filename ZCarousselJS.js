@@ -41,6 +41,7 @@ class Carousel {
     this.root.appendChild(this.container);
     this.element.appendChild(this.root);
     this.moveCallbacks = [];
+    this.offset = 0;
     this.items = children.map((child) => {
       let item = this.createDivWithClass("carousel-item");
       item.appendChild(child);
@@ -49,18 +50,17 @@ class Carousel {
 
     if (this.options.infinite) {
       // Si infinite = true, alors on va créer un système créant plusieurs tableau avec les items
-      let offset = this.options.slidesVisible * 2 - 1;
+      this.offset = this.options.slidesVisible + this.options.slidesToScroll;
       this.items = [
         ...this.items // on concate avec ...
-          .slice(this.items.length - offset) // on récupère les 5 derniers element pour les mettre devant
+          .slice(this.items.length - this.offset) // on récupère les 5 derniers element pour les mettre devant
           .map((item) => item.cloneNode(true)),
         ...this.items, // Les elements en tout
         ...this.items
-          .slice(0, offset) // on récupère les 5 premiers element pour les mettre après
+          .slice(0, this.offset) // on récupère les 5 premiers element pour les mettre après
           .map((item) => item.cloneNode(true)), // on clone dans un nouveau tableau "map" avec true pour cloner les enfants
       ];
-      this.gotoItem(offset, false);
-      console.log(this.items);
+      this.gotoItem(this.offset, false);
     }
     this.items.forEach((item) => this.container.appendChild(item)); // pour chaque element on l'installe dans le container
     this.setStyle(); // appel la fonction de calcul d'emplacement
@@ -114,17 +114,22 @@ class Carousel {
     this.root.appendChild(pagination);
     for (
       let i = 0;
-      i < this.items.length;
+      i < this.items.length - 2 * this.offset;
       i = i + this.options.slidesToScroll
     ) {
       let button = this.createDivWithClass("carousel-pagination-button");
-      button.addEventListener("click", () => this.gotoItem(i));
+      button.addEventListener("click", () => this.gotoItem(i + this.offset));
       pagination.appendChild(button);
       buttons.push(button);
     }
     this.onMove((index) => {
+      let count = this.items.length - 2 * this.offset;
       let activeButton =
-        buttons[Math.floor(index / this.options.slidesToScroll)];
+        buttons[
+          Math.floor(
+            ((index - this.offset) % count) / this.options.slidesToScroll
+          )
+        ];
       if (activeButton) {
         buttons.forEach((button) =>
           button.classList.remove("carousel-pagination-button--active")
@@ -174,6 +179,17 @@ class Carousel {
 
   resetInfinite() {
     // créer l'effet d'infini en deplaçant le this.container
+    if (this.currentItem <= this.options.slidesToScroll) {
+      this.gotoItem(
+        this.currentItem + this.items.length - 2 * this.offset,
+        false
+      );
+    } else if (this.currentItem >= this.items.length - this.offset) {
+      this.gotoItem(
+        this.currentItem - (this.items.length - 2 * this.offset),
+        false
+      );
+    }
   }
 
   /**
@@ -239,14 +255,13 @@ var onReady = function () {
   new Carousel(document.querySelector("#carousel1"), {
     slidesToScroll: 1,
     slidesVisible: 3,
-    loop: true,
     pagination: true,
+    infinite: true,
   });
 
   new Carousel(document.querySelector("#carousel2"), {
-    slidesToScroll: 2,
+    slidesToScroll: 1,
     slidesVisible: 3,
-    loop: true,
     pagination: true,
     infinite: true,
   });
