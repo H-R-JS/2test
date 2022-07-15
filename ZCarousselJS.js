@@ -1,3 +1,37 @@
+/**
+ * Permet de calculer la navigation tactile pour le carousel
+ */
+
+class CarouselTouchPlugin {
+  /**
+   *
+   * @param {Carousel} carousel
+   */
+  constructor(carousel) {
+    carousel.element.addEventListener("mousedown", this.startDrag.bind(this));
+    carousel.element.addEventListener("touchStart", this.startDrag.bind(this));
+    this.carousel = carousel;
+  }
+
+  /**
+   * Demarre le déplacement au touché
+   * @pram (MouseEvent | TouchStart)
+   */
+  startDrag(e) {
+    if (e.touches) {
+      // Permet d'écouter s'il y a contact sur l'ecran avec "touches"
+      if (e.touches.length > 1) {
+        return;
+      } else {
+        e = e.touches[0]; // On prend le premier point de contact
+      }
+    }
+    this.origin = { x: e.screenX, y: e.screenY };
+    this.carousel.disableTransition();
+    console.log("startDrag");
+  }
+}
+
 class Carousel {
   /**
    * @callback moveCallbacks
@@ -33,6 +67,9 @@ class Carousel {
       },
       options
     );
+    if (this.options.loop && this.options.infinite) {
+      throw new Error("Loop et infinite ne sont pas compatible"); // Lance une nouvelle erreur ce qui bloque le code et renvoir l'erreur dans la console
+    }
     let children = [].slice.call(element.children); // variable array contenant les element enfants ( slice transfert les enfants dans le nouveau tableau, en l'appelant dans le tableau créer et non celui de slice)
     this.isMobile = false;
     this.currentItem = 0;
@@ -51,6 +88,9 @@ class Carousel {
     if (this.options.infinite) {
       // Si infinite = true, alors on va créer un système créant plusieurs tableau avec les items
       this.offset = this.options.slidesVisible + this.options.slidesToScroll;
+      if (this.offset > children.length) {
+        console.error("Offset trop haut par rapport au elements"); // Cela renvoit seulement une erreur dans la console, ça ne bloque aucun code
+      }
       this.items = [
         ...this.items // on concate avec ...
           .slice(this.items.length - this.offset) // on récupère les 5 derniers element pour les mettre devant
@@ -81,6 +121,7 @@ class Carousel {
         this.resetInfinite.bind(this)
       );
     }
+    new CarouselTouchPlugin(this);
   }
 
   createNavigation() {
@@ -166,12 +207,12 @@ class Carousel {
     }
     let translateX = (index * -100) / this.items.length; // cacule le déplacement en fonction de l'index donné
     if (animation === false) {
-      this.container.style.transition = "none";
+      this.disableTransition();
     }
     this.container.style.transform = "translate3d(" + translateX + "%, 0, 0)";
     this.container.offsetHeight; // recupère une propriété pour forcer l'usage de la prochaine condition
     if (animation === false) {
-      this.container.style.transition = "";
+      this.enableTransition();
     }
     this.currentItem = index;
     this.moveCallbacks.forEach((callB) => callB(index));
@@ -232,6 +273,14 @@ class Carousel {
     let div = document.createElement("div");
     div.classList.add(className);
     return div;
+  }
+
+  disableTransition() {
+    this.container.style.transition = "none";
+  }
+
+  enableTransition() {
+    this.container.style.transition = "";
   }
 
   /**
