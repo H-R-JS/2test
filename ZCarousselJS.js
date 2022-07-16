@@ -8,8 +8,16 @@ class CarouselTouchPlugin {
    * @param {Carousel} carousel
    */
   constructor(carousel) {
-    carousel.element.addEventListener("mousedown", this.startDrag.bind(this));
-    carousel.element.addEventListener("touchStart", this.startDrag.bind(this));
+    carousel.container.addEventListener("mousedown", this.startDrag.bind(this));
+    carousel.container.addEventListener(
+      "touchstart",
+      this.startDrag.bind(this)
+    );
+    window.addEventListener("mousemove", this.drag.bind(this));
+    window.addEventListener("touchmove", this.drag.bind(this));
+    window.addEventListener("touchend", this.endDrag.bind(this));
+    window.addEventListener("mouseup", this.endDrag.bind(this));
+    window.addEventListener("touchCancel", this.endDrag.bind(this));
     this.carousel = carousel;
   }
 
@@ -27,8 +35,48 @@ class CarouselTouchPlugin {
       }
     }
     this.origin = { x: e.screenX, y: e.screenY };
+    this.width = this.carousel.containerWidth;
     this.carousel.disableTransition();
-    console.log("startDrag");
+    console.log("no");
+  }
+
+  drag(e) {
+    if (this.origin) {
+      let point = e.touches ? e.touches[0] : e;
+      let translate = {
+        x: point.screenX - this.origin.x,
+        y: point.screenY - this.origin.y,
+      };
+      let baseTranslate =
+        (this.carousel.currentItem * -100) /*pour la gauche (-)*/ /
+        this.carousel.items.length; // Règle de trois pour calculer un pourcentage
+      this.lastTranslate = translate;
+      this.carousel.translate((baseTranslate + 100 * translate.x) / this.width);
+    }
+    console.log("yes");
+  }
+
+  /**
+   * fin du déplacement
+   * @pram (MouseEvent | Touchend)
+   */
+
+  endDrag(e) {
+    if (this.origin && this.lastTranslate) {
+      this.carousel.enableTransition();
+      if (Math.abs(this.lastTranslate.x / this.carousel.carouselWidth) > 0.2) {
+        // Math.abs retourne une valeur absolu donc sans négatit ou positif
+        // Donne une valeur entre 1 et 0
+        if (this.lastTranslate.x < 0) {
+          this.carousel.next();
+        } else {
+          this.carousel.prev();
+        }
+      } else {
+        this.carousel.gotoItem(this.carousel.currentItem);
+      }
+      this.origin = null; // plus aucune raison de son existence une fois le drag relaché
+    }
   }
 }
 
@@ -38,7 +86,6 @@ class Carousel {
    * @param (number) index
    *
    */
-
   /**
    *
    * @param {HTMLElement} element
@@ -180,6 +227,11 @@ class Carousel {
     });
   }
 
+  translate(percent) {
+    // Pour deplacer avec le doigt
+    this.container.style.transform = "translate3d(" + percent + "%, 0, 0)";
+  }
+
   next() {
     this.gotoItem(this.currentItem + this.slidesToScroll); // appel gotoItem et calcul en paramètre l'index par rapport à celui initialisé
   }
@@ -209,6 +261,7 @@ class Carousel {
     if (animation === false) {
       this.disableTransition();
     }
+    this.translate(translateX);
     this.container.style.transform = "translate3d(" + translateX + "%, 0, 0)";
     this.container.offsetHeight; // recupère une propriété pour forcer l'usage de la prochaine condition
     if (animation === false) {
@@ -297,6 +350,22 @@ class Carousel {
 
   get slidesVisible() {
     return this.isMobile ? 1 : this.options.slidesVisible;
+  }
+
+  /**
+   * @return (number)
+   */
+
+  get containerWidth() {
+    return this.container.offsetWidth;
+  }
+
+  /**
+   * @return (number)
+   */
+
+  get carouselWidth() {
+    return this.root.offsetWidth;
   }
 }
 
