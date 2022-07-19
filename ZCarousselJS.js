@@ -8,6 +8,7 @@ class CarouselTouchPlugin {
    * @param {Carousel} carousel
    */
   constructor(carousel) {
+    carousel.container.addEventListener("dragstart", (e) => e.preventDefault());
     carousel.container.addEventListener("mousedown", this.startDrag.bind(this));
     carousel.container.addEventListener(
       "touchstart",
@@ -47,11 +48,15 @@ class CarouselTouchPlugin {
         x: point.screenX - this.origin.x,
         y: point.screenY - this.origin.y,
       };
+      if (e.touches && Math.abs(translate.x) > Math.abs(translate.y)) {
+        e.preventDefault;
+        e.stopPropagation;
+      }
       let baseTranslate =
         (this.carousel.currentItem * -100) /*pour la gauche (-)*/ /
         this.carousel.items.length; // Règle de trois pour calculer un pourcentage
       this.lastTranslate = translate;
-      this.carousel.translate((baseTranslate + 100 * translate.x) / this.width);
+      this.carousel.translate(baseTranslate + (100 * translate.x) / this.width);
     }
     console.log("yes");
   }
