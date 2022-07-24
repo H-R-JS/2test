@@ -119,6 +119,7 @@ class Carousel {
       },
       options
     );
+    debugger;
     if (this.options.loop && this.options.infinite) {
       throw new Error("Loop et infinite ne sont pas compatible"); // Lance une nouvelle erreur ce qui bloque le code et renvoir l'erreur dans la console
     }
@@ -155,7 +156,9 @@ class Carousel {
       this.gotoItem(this.offset, false);
     }
     this.items.forEach((item) => this.container.appendChild(item)); // pour chaque element on l'installe dans le container
+
     this.setStyle(); // appel la fonction de calcul d'emplacement
+
     if (this.options.navigation) {
       this.createNavigation();
     }
