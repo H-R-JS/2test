@@ -119,7 +119,6 @@ class Carousel {
       },
       options
     );
-    debugger;
     if (this.options.loop && this.options.infinite) {
       throw new Error("Loop et infinite ne sont pas compatible"); // Lance une nouvelle erreur ce qui bloque le code et renvoir l'erreur dans la console
     }
@@ -256,11 +255,10 @@ class Carousel {
 
   gotoItem(index, animation = true) {
     if (index < 0) {
-      index = this.items.length - this.options.slidesVisible;
+      index = this.items.length - this.slidesVisible;
     } else if (
       index >= this.items.length ||
-      (this.items[this.currentItem + this.options.slidesVisible] ===
-        undefined &&
+      (this.items[this.currentItem + this.slidesVisible] === undefined &&
         index > this.currentItem)
     ) {
       index = 0;

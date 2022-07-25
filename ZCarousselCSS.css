@@ -54,6 +54,7 @@ body {
 }
 
 .carousel-container::after {
+  background-color: red;
   content: "";
   clear: both;
   display: table;
