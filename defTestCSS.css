@@ -1,0 +1,16 @@
+.box {
+  margin: 500px 60px;
+  padding: 100px;
+  border: 2px solid black;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: 0.3s;
+}
