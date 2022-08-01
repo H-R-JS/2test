@@ -8,11 +8,14 @@ const options = {
 const handleIntersect = function (entries, observer) {
   entries.forEach(function (entry) {
     if (entry.intersectionRatio > ratio) {
-      entry.target.classList.add("reveal-visible");
+      entry.target.classList.remove("reveal");
       observer.unobserve(entry.target);
     }
   });
 };
-
+document.documentElement.classList.add("reveal-loaded"); // Pour que l'execution du js s'active une fois celui-ci charger, et non lors de l'execution cela améliore le chargement de la page lorsque le code pèse
 const observer = new IntersectionObserver(handleIntersect, options);
-observer.observe(document.querySelector(".reveal"));
+document.querySelectorAll(".reveal").forEach(function (r) {
+  // Pour chaue "reveal" on observe
+  observer.observe(r);
+});
