@@ -1,0 +1,28 @@
+html,
+body {
+  scroll-behavior: smooth;
+}
+
+nav {
+  background-color: #aaa;
+  height: 100px;
+  position: fixed;
+  transition: 0.4;
+}
+
+a {
+  float: left;
+  text-decoration: none;
+  color: black;
+  padding: 50px;
+}
+
+section {
+  background-color: beige;
+  padding: 400px;
+  border-bottom: 3px solid black;
+}
+
+.active {
+  border-bottom: 4px solid black;
+}
